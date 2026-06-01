@@ -1024,6 +1024,7 @@ html, body {
   display: flex;
   flex-shrink: 0;
   background: var(--bg3);
+  border-bottom: 1px solid var(--border);
 }
 
 .tl-day-col {
