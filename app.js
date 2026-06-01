@@ -717,7 +717,10 @@ const Stats = (() => {
       renderTimeline(tlYear, tlMonth, Storage.load());
     });
 
-    document.getElementById('platform-close').addEventListener('click', closePlatformModal);
+    document.getElementById('platform-close').addEventListener('click', e => {
+      e.stopPropagation();
+      closePlatformModal();
+    });
     document.getElementById('platform-overlay').addEventListener('click', e => {
       if (e.target === document.getElementById('platform-overlay')) closePlatformModal();
     });
@@ -880,7 +883,8 @@ document.addEventListener('DOMContentLoaded', () => {
   Stats.init();
   Menu.init();
 
-  // Initial render
+  // Initial render — must call showView to ensure correct active state (fixes mobile bfcache blank gallery)
+  Router.showView('gallery');
   Gallery.render();
 
   // PWA

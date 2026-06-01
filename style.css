@@ -627,31 +627,57 @@ html, body {
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
   box-shadow: 0 16px 64px #1E3A8A18;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0;
+  flex-shrink: 0;
+}
+
+.modal-header .modal-heading {
+  padding: 0;
+  flex: 1;
+}
+
+/* close button만 있을 때 오른쪽 정렬 (detail modal) */
+.modal-header .modal-close:only-child {
+  margin-left: auto;
+}
+
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
   background: var(--bg3);
   border: none;
   color: var(--text-dim);
   font-size: 1rem;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 1;
+  flex-shrink: 0;
+  touch-action: manipulation;
   transition: background .15s, color .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close:hover { background: var(--border); color: var(--text); }
 
 .modal-heading {
-  padding: 20px 20px 0;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--cyan);
@@ -663,7 +689,7 @@ html, body {
   aspect-ratio: 16 / 9;
   background: linear-gradient(135deg, var(--bg3) 0%, #DBEAFE 100%);
   overflow: hidden;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;

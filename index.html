@@ -215,23 +215,27 @@
   <!-- DETAIL MODAL -->
   <div class="modal-overlay hidden" id="detail-overlay">
     <div class="modal-box" id="detail-modal">
-      <button class="modal-close" id="detail-close">✕</button>
-      <div class="detail-cover-wrap">
-        <img id="detail-cover" src="" alt="" class="detail-cover hidden">
-        <div class="detail-cover-placeholder hidden" id="detail-cover-placeholder">🎮</div>
+      <div class="modal-header">
+        <button class="modal-close" id="detail-close">✕</button>
       </div>
-      <div class="detail-body">
-        <div class="detail-badges">
-          <span class="badge-platform" id="detail-platform"></span>
-          <span class="badge-ending" id="detail-ending"></span>
+      <div class="modal-body">
+        <div class="detail-cover-wrap">
+          <img id="detail-cover" src="" alt="" class="detail-cover hidden">
+          <div class="detail-cover-placeholder hidden" id="detail-cover-placeholder">🎮</div>
         </div>
-        <h2 class="detail-title" id="detail-title"></h2>
-        <div class="detail-stars" id="detail-stars"></div>
-        <div class="detail-dates" id="detail-dates"></div>
-        <p class="detail-review" id="detail-review"></p>
-        <div class="detail-actions">
-          <button class="btn-secondary" id="detail-edit">✏️ 수정</button>
-          <button class="btn-danger" id="detail-delete">🗑 삭제</button>
+        <div class="detail-body">
+          <div class="detail-badges">
+            <span class="badge-platform" id="detail-platform"></span>
+            <span class="badge-ending" id="detail-ending"></span>
+          </div>
+          <h2 class="detail-title" id="detail-title"></h2>
+          <div class="detail-stars" id="detail-stars"></div>
+          <div class="detail-dates" id="detail-dates"></div>
+          <p class="detail-review" id="detail-review"></p>
+          <div class="detail-actions">
+            <button class="btn-secondary" id="detail-edit">✏️ 수정</button>
+            <button class="btn-danger" id="detail-delete">🗑 삭제</button>
+          </div>
         </div>
       </div>
     </div>
@@ -240,9 +244,13 @@
   <!-- PLATFORM MODAL -->
   <div class="modal-overlay hidden" id="platform-overlay">
     <div class="modal-box" id="platform-modal">
-      <button class="modal-close" id="platform-close">✕</button>
-      <h3 class="modal-heading" id="platform-modal-title"></h3>
-      <ul class="platform-game-list" id="platform-game-list"></ul>
+      <div class="modal-header">
+        <h3 class="modal-heading" id="platform-modal-title"></h3>
+        <button class="modal-close" id="platform-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <ul class="platform-game-list" id="platform-game-list"></ul>
+      </div>
     </div>
   </div>
 
