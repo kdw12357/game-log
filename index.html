@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>게임 기록</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="app-logo">🎮 게임 기록</span>
+      <nav class="main-tabs">
+        <button class="tab-btn active" data-tab="gallery">갤러리</button>
+        <button class="tab-btn" data-tab="stats">결산</button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <button class="btn-add" id="btn-add-game">+ 게임 등록</button>
+      <div class="menu-wrapper">
+        <button class="btn-menu" id="btn-menu" aria-label="메뉴">☰</button>
+        <div class="menu-dropdown hidden" id="menu-dropdown">
+          <button class="menu-item" id="menu-export">📤 JSON 내보내기</button>
+          <button class="menu-item" id="menu-import">📥 JSON 가져오기</button>
+          <button class="menu-item disabled" disabled>🔄 동기화 (준비 중)</button>
+          <button class="menu-item disabled" disabled>🔑 비밀 키 설정 (준비 중)</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="app-main">
+
+    <!-- GALLERY VIEW -->
+    <section id="gallery-view" class="view active">
+      <div class="gallery-toolbar">
+        <div class="year-filter-wrap">
+          <label for="year-filter">연도</label>
+          <select id="year-filter" class="year-select"></select>
+        </div>
+        <div class="gallery-count" id="gallery-count"></div>
+      </div>
+      <div id="gallery-container"></div>
+      <div class="empty-state hidden" id="gallery-empty">
+        <div class="empty-icon">🎮</div>
+        <p>아직 기록된 게임이 없습니다.</p>
+        <button class="btn-primary" id="btn-add-first">첫 게임 등록하기</button>
+      </div>
+    </section>
+
+    <!-- STATS VIEW -->
+    <section id="stats-view" class="view hidden">
+      <div class="stats-toolbar">
+        <div class="year-filter-wrap">
+          <label for="stats-year">연도</label>
+          <select id="stats-year" class="year-select"></select>
+        </div>
+      </div>
+
+      <!-- 4-1 요약 카드 -->
+      <div class="stats-summary">
+        <div class="summary-card">
+          <div class="summary-num" id="stat-cleared">0</div>
+          <div class="summary-label">클리어</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num" id="stat-total">0</div>
+          <div class="summary-label">총 플레이</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num" id="stat-playing">0</div>
+          <div class="summary-label">진행 중</div>
+        </div>
+      </div>
+
+      <!-- 4-2 플랫폼 통계 -->
+      <div class="stats-section">
+        <h2 class="stats-heading">플랫폼별</h2>
+        <div class="platform-scroll">
+          <div class="platform-cards" id="platform-cards"></div>
+        </div>
+      </div>
+
+      <!-- 4-3 타임라인 -->
+      <div class="stats-section">
+        <h2 class="stats-heading">타임라인</h2>
+        <div class="timeline-header">
+          <button class="timeline-nav" id="tl-prev">‹</button>
+          <span class="timeline-month-label" id="tl-label"></span>
+          <button class="timeline-nav" id="tl-next">›</button>
+        </div>
+        <div class="timeline-container" id="timeline-container"></div>
+        <div class="empty-state hidden" id="timeline-empty">
+          <p>이 달에 플레이한 게임이 없습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM VIEW -->
+    <section id="form-view" class="view hidden">
+      <div class="form-card">
+        <div class="form-header">
+          <h2 id="form-title">게임 등록</h2>
+          <button class="btn-close-form" id="btn-close-form">✕</button>
+        </div>
+
+        <form id="game-form" novalidate>
+          <input type="hidden" id="field-id">
+
+          <!-- 커버 이미지 -->
+          <div class="form-group form-cover-group">
+            <div class="cover-preview" id="cover-preview">
+              <span class="cover-placeholder">🎮</span>
+            </div>
+            <div class="cover-actions">
+              <label class="btn-secondary" for="field-cover">이미지 선택</label>
+              <input type="file" id="field-cover" accept="image/*" class="hidden">
+              <button type="button" class="btn-ghost" id="btn-remove-cover">제거</button>
+            </div>
+          </div>
+
+          <!-- 게임 제목 -->
+          <div class="form-group">
+            <label for="field-title">게임 제목 <span class="required">*</span></label>
+            <input type="text" id="field-title" placeholder="예: Elden Ring" required>
+          </div>
+
+          <!-- 플랫폼 -->
+          <div class="form-group">
+            <label for="field-platform">플랫폼</label>
+            <select id="field-platform">
+              <option value="">선택</option>
+              <option value="닌텐도">닌텐도</option>
+              <option value="PlayStation">PlayStation</option>
+              <option value="Xbox">Xbox</option>
+              <option value="Steam/PC">Steam/PC</option>
+              <option value="모바일">모바일</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+
+          <!-- 엔딩 여부 -->
+          <div class="form-group">
+            <label>엔딩 여부</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="ending" value="Yes"> <span>Yes</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ending" value="No"> <span>No</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="ending" value="진행중" checked> <span>진행 중</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 별점 -->
+          <div class="form-group">
+            <label>별점</label>
+            <div class="star-input" id="star-input">
+              <span class="star" data-val="1">★</span>
+              <span class="star" data-val="2">★</span>
+              <span class="star" data-val="3">★</span>
+              <span class="star" data-val="4">★</span>
+              <span class="star" data-val="5">★</span>
+            </div>
+            <input type="hidden" id="field-rating" value="0">
+          </div>
+
+          <!-- 날짜 -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="field-start-date">시작일</label>
+              <input type="date" id="field-start-date">
+            </div>
+            <div class="form-group">
+              <label for="field-end-date">종료일</label>
+              <input type="date" id="field-end-date">
+            </div>
+          </div>
+
+          <!-- 한줄평 -->
+          <div class="form-group">
+            <label for="field-review">한줄평</label>
+            <textarea id="field-review" rows="3" placeholder="이 게임에 대한 한줄 소감..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="btn-cancel-form">취소</button>
+            <button type="submit" class="btn-primary" id="btn-submit-form">등록</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DETAIL MODAL -->
+  <div class="modal-overlay hidden" id="detail-overlay">
+    <div class="modal-box" id="detail-modal">
+      <button class="modal-close" id="detail-close">✕</button>
+      <div class="detail-cover-wrap">
+        <img id="detail-cover" src="" alt="" class="detail-cover hidden">
+        <div class="detail-cover-placeholder hidden" id="detail-cover-placeholder">🎮</div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-badges">
+          <span class="badge-platform" id="detail-platform"></span>
+          <span class="badge-ending" id="detail-ending"></span>
+        </div>
+        <h2 class="detail-title" id="detail-title"></h2>
+        <div class="detail-stars" id="detail-stars"></div>
+        <div class="detail-dates" id="detail-dates"></div>
+        <p class="detail-review" id="detail-review"></p>
+        <div class="detail-actions">
+          <button class="btn-secondary" id="detail-edit">✏️ 수정</button>
+          <button class="btn-danger" id="detail-delete">🗑 삭제</button>
+          <button class="btn-primary" id="detail-rawg">🔍 RAWG 검색</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLATFORM MODAL -->
+  <div class="modal-overlay hidden" id="platform-overlay">
+    <div class="modal-box" id="platform-modal">
+      <button class="modal-close" id="platform-close">✕</button>
+      <h3 class="modal-heading" id="platform-modal-title"></h3>
+      <ul class="platform-game-list" id="platform-game-list"></ul>
+    </div>
+  </div>
+
+  <!-- TIMELINE POPUP -->
+  <div class="tl-popup hidden" id="tl-popup">
+    <button class="tl-popup-close" id="tl-popup-close">✕</button>
+    <img class="tl-popup-cover hidden" id="tl-popup-cover" src="" alt="">
+    <div class="tl-popup-placeholder hidden" id="tl-popup-placeholder">🎮</div>
+    <div class="tl-popup-title" id="tl-popup-title"></div>
+    <div class="tl-popup-meta" id="tl-popup-meta"></div>
+    <button class="btn-primary tl-popup-detail" id="tl-popup-detail">상세 보기</button>
+  </div>
+  <div class="tl-popup-backdrop hidden" id="tl-popup-backdrop"></div>
+
+  <!-- HIDDEN IMPORT INPUT -->
+  <input type="file" id="import-file-input" accept=".json" class="hidden">
+
+  <script src="app.js"></script>
+</body>
+</html>
