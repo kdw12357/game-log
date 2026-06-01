@@ -4,9 +4,15 @@
 
 // ===== STORAGE =====
 const Storage = (() => {
-  const KEY = 'game-log-data';
+  const KEY = 'games';
+  const OLD_KEY = 'game-log-data';
 
   function load() {
+    const old = localStorage.getItem(OLD_KEY);
+    if (old && !localStorage.getItem(KEY)) {
+      localStorage.setItem(KEY, old);
+      localStorage.removeItem(OLD_KEY);
+    }
     try { return JSON.parse(localStorage.getItem(KEY)) || []; }
     catch { return []; }
   }
@@ -112,6 +118,171 @@ const Router = (() => {
   }
 
   return { showView, getCurrent: () => current };
+})();
+
+// ===== TOAST =====
+const Toast = (() => {
+  function show(msg, type = 'info') {
+    const existing = document.getElementById('toast-el');
+    if (existing) existing.remove();
+
+    const el = document.createElement('div');
+    el.id = 'toast-el';
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => el.classList.add('toast-visible'));
+    });
+    setTimeout(() => {
+      el.classList.remove('toast-visible');
+      setTimeout(() => el.remove(), 300);
+    }, 2500);
+  }
+
+  return { show };
+})();
+
+// ===== SYNC =====
+const Sync = (() => {
+  const SYNC_URL = 'https://reading-proxy.kdw12357.workers.dev/sync?key=games';
+
+  function getSecret() {
+    return localStorage.getItem('syncSecret') || '';
+  }
+
+  function setStatus(state) {
+    const el = document.getElementById('sync-indicator');
+    if (!el) return;
+    el.className = 'sync-indicator sync-' + state;
+    const labels = {
+      synced: '동기화됨',
+      syncing: '동기화 중...',
+      offline: '오프라인',
+      failed: '동기화 실패',
+      idle: ''
+    };
+    el.textContent = labels[state] ?? '';
+  }
+
+  async function syncDown(manual = false) {
+    const secret = getSecret();
+    if (!secret) {
+      SecretKeyModal.open();
+      return;
+    }
+
+    setStatus('syncing');
+    try {
+      const res = await fetch(SYNC_URL, {
+        headers: { 'X-Sync-Secret': secret }
+      });
+
+      if (res.status === 401) {
+        setStatus('failed');
+        Toast.show('비밀 키가 올바르지 않습니다', 'error');
+        SecretKeyModal.open();
+        return;
+      }
+
+      if (!res.ok) throw new Error(`서버 오류 (${res.status})`);
+
+      const data = await res.json();
+      if (Array.isArray(data.games)) {
+        Storage.save(data.games);
+        Gallery.render();
+        if (Router.getCurrent() === 'stats') Stats.render();
+      } else {
+        // 서버에 데이터 없으면 로컬 데이터를 서버로 push
+        const local = Storage.load();
+        if (local.length > 0) syncUp(local);
+      }
+
+      setStatus('synced');
+      if (manual) Toast.show('동기화 완료', 'success');
+    } catch (err) {
+      if (!navigator.onLine) {
+        setStatus('offline');
+        if (manual) Toast.show('오프라인 상태입니다', 'error');
+      } else {
+        setStatus('failed');
+        if (manual) Toast.show('동기화 실패: ' + err.message, 'error');
+      }
+    }
+  }
+
+  async function syncUp(games) {
+    const secret = getSecret();
+    if (!secret) return;
+
+    setStatus('syncing');
+    try {
+      const res = await fetch(SYNC_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Sync-Secret': secret
+        },
+        body: JSON.stringify({ games })
+      });
+
+      if (!res.ok) throw new Error(`서버 오류 (${res.status})`);
+      setStatus('synced');
+    } catch {
+      setStatus('failed');
+      Toast.show('동기화 실패 (로컬 저장 완료)', 'error');
+    }
+  }
+
+  return { syncDown, syncUp, getSecret, setStatus };
+})();
+
+// ===== SECRET KEY MODAL =====
+const SecretKeyModal = (() => {
+  function open() {
+    const current = localStorage.getItem('syncSecret') || '';
+    document.getElementById('secret-key-input').value = current;
+    document.getElementById('secret-modal-overlay').classList.remove('hidden');
+    setTimeout(() => document.getElementById('secret-key-input').focus(), 100);
+  }
+
+  function close() {
+    document.getElementById('secret-modal-overlay').classList.add('hidden');
+  }
+
+  function init() {
+    document.getElementById('secret-key-confirm').addEventListener('click', () => {
+      const val = document.getElementById('secret-key-input').value.trim();
+      if (!val) {
+        Toast.show('비밀 키를 입력해주세요', 'error');
+        return;
+      }
+      localStorage.setItem('syncSecret', val);
+      close();
+      Sync.syncDown();
+    });
+
+    document.getElementById('secret-key-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('secret-key-confirm').click();
+    });
+
+    document.getElementById('secret-key-delete').addEventListener('click', () => {
+      if (!confirm('비밀 키를 삭제할까요? 동기화가 비활성화됩니다.')) return;
+      localStorage.removeItem('syncSecret');
+      Sync.setStatus('idle');
+      close();
+      Toast.show('비밀 키가 삭제되었습니다', 'info');
+    });
+
+    document.getElementById('secret-key-cancel').addEventListener('click', close);
+
+    document.getElementById('secret-modal-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('secret-modal-overlay')) close();
+    });
+  }
+
+  return { open, close, init };
 })();
 
 // ===== FORM =====
@@ -235,6 +406,7 @@ const Form = (() => {
         games.unshift(game);
       }
       Storage.save(games);
+      Sync.syncUp(games);
 
       closeAllDropdowns();
       Router.showView('gallery');
@@ -449,11 +621,11 @@ const Detail = (() => {
       if (!confirm('이 게임 기록을 삭제할까요?')) return;
       const games = Storage.load().filter(g => g.id !== currentId);
       Storage.save(games);
+      Sync.syncUp(games);
       close();
       Gallery.render();
       if (Router.getCurrent() === 'stats') Stats.render();
     });
-
   }
 
   return { open, close, init };
@@ -587,7 +759,6 @@ const Stats = (() => {
 
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // Games that overlap this month
     const monthStart = new Date(year, month, 1);
     const monthEnd = new Date(year, month, daysInMonth, 23, 59, 59);
 
@@ -750,7 +921,6 @@ const Menu = (() => {
     });
 
     document.addEventListener('click', closeAllDropdowns);
-
     dropdown.addEventListener('click', e => e.stopPropagation());
 
     document.getElementById('menu-export').addEventListener('click', () => {
@@ -763,12 +933,23 @@ const Menu = (() => {
       document.getElementById('import-file-input').click();
     });
 
+    document.getElementById('menu-sync').addEventListener('click', () => {
+      closeAllDropdowns();
+      Sync.syncDown(true);
+    });
+
+    document.getElementById('menu-secret').addEventListener('click', () => {
+      closeAllDropdowns();
+      SecretKeyModal.open();
+    });
+
     document.getElementById('import-file-input').addEventListener('change', async e => {
       const file = e.target.files[0];
       if (!file) return;
       try {
         const count = await Storage.importJSON(file);
         alert(`${count}개의 게임 기록을 가져왔습니다.`);
+        Sync.syncUp(Storage.load());
         Gallery.render();
         if (Router.getCurrent() === 'stats') Stats.render();
       } catch (err) {
@@ -882,10 +1063,18 @@ document.addEventListener('DOMContentLoaded', () => {
   Detail.init();
   Stats.init();
   Menu.init();
+  SecretKeyModal.init();
 
-  // Initial render — must call showView to ensure correct active state (fixes mobile bfcache blank gallery)
+  // Initial render
   Router.showView('gallery');
   Gallery.render();
+
+  // Auto-sync on startup
+  if (Sync.getSecret()) {
+    Sync.syncDown();
+  } else {
+    SecretKeyModal.open();
+  }
 
   // PWA
   generateIcons();
