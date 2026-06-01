@@ -379,7 +379,7 @@ const Gallery = (() => {
     function doRawgSearch() {
       const q = rawgInput.value.trim();
       if (!q) return;
-      window.open('https://rawg.io/search?query=' + encodeURIComponent(q), '_blank');
+      window.open('https://namu.wiki/w/' + encodeURIComponent(q), '_blank');
     }
     rawgBtn.addEventListener('click', doRawgSearch);
     rawgInput.addEventListener('keydown', e => { if (e.key === 'Enter') doRawgSearch(); });
@@ -454,13 +454,6 @@ const Detail = (() => {
       if (Router.getCurrent() === 'stats') Stats.render();
     });
 
-    document.getElementById('detail-rawg').addEventListener('click', () => {
-      const games = Storage.load();
-      const game = games.find(g => g.id === currentId);
-      if (!game) return;
-      const q = encodeURIComponent(game.title);
-      window.open(`https://rawg.io/search?query=${q}`, '_blank');
-    });
   }
 
   return { open, close, init };

@@ -838,7 +838,7 @@ html, body {
 .summary-card:hover { border-color: var(--blue); }
 
 .summary-num {
-  font-size: 2.8rem;
+  font-size: 3.5rem;
   font-weight: 900;
   color: var(--blue);
   line-height: 1;
@@ -847,7 +847,7 @@ html, body {
 }
 
 .summary-label {
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   color: var(--text-dim);
   font-weight: 600;
   text-transform: uppercase;
@@ -893,14 +893,14 @@ html, body {
 }
 
 .platform-card-name {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-dim);
   margin-bottom: 6px;
 }
 
 .platform-card-count {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   font-weight: 900;
   color: var(--cyan);
   text-shadow: 0 0 12px #0EA5E950;
@@ -1124,7 +1124,7 @@ html, body {
   .btn-add { padding: 0 12px; font-size: 0.8rem; }
   .app-main { padding: 16px 12px 48px; }
   .stats-summary { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .summary-num { font-size: 1.8rem; }
+  .summary-num { font-size: 2.2rem; }
   .form-card { padding: 20px 16px 24px; }
   .form-row { grid-template-columns: 1fr; }
   .game-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }

@@ -1,6 +1,6 @@
 {
   "name": "게임 기록",
-  "short_name": "게임",
+  "short_name": "게임 기록",
   "description": "내가 플레이한 게임을 기록하는 앱",
   "lang": "ko",
   "start_url": ".",
