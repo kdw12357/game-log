@@ -9,6 +9,9 @@
   <title>게임 기록</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -41,6 +44,11 @@
 
     <!-- GALLERY VIEW -->
     <section id="gallery-view" class="view active">
+      <!-- RAWG 검색 바 -->
+      <div class="rawg-search-bar">
+        <input type="text" id="rawg-input" placeholder="게임 제목으로 RAWG 검색...">
+        <button type="button" id="rawg-btn">🔍 RAWG 검색</button>
+      </div>
       <div class="gallery-toolbar">
         <div class="year-filter-wrap">
           <label for="year-filter">연도</label>

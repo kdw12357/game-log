@@ -373,6 +373,16 @@ const Gallery = (() => {
       renderFiltered(Storage.load());
     });
     document.getElementById('btn-add-first').addEventListener('click', () => Form.open());
+
+    const rawgInput = document.getElementById('rawg-input');
+    const rawgBtn = document.getElementById('rawg-btn');
+    function doRawgSearch() {
+      const q = rawgInput.value.trim();
+      if (!q) return;
+      window.open('https://rawg.io/search?query=' + encodeURIComponent(q), '_blank');
+    }
+    rawgBtn.addEventListener('click', doRawgSearch);
+    rawgInput.addEventListener('keydown', e => { if (e.key === 'Enter') doRawgSearch(); });
   }
 
   return { render, init };
