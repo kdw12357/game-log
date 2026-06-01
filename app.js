@@ -636,6 +636,7 @@ const Stats = (() => {
   let tlYear = new Date().getFullYear();
   let tlMonth = new Date().getMonth(); // 0-indexed
   let tlPopupGameId = null;
+  let currentYearGames = [];
 
   function getYears(games) {
     const ySet = new Set(games.map(getYear).filter(y => y !== '날짜 미정'));
@@ -674,6 +675,7 @@ const Stats = (() => {
   function renderYear(year, games) {
     tlYear = year;
     const yearGames = games.filter(g => getYear(g) === year.toString());
+    currentYearGames = yearGames;
 
     // 4-1 Summary
     document.getElementById('stat-cleared').textContent = yearGames.filter(g => g.ending === 'Yes').length;
@@ -710,9 +712,8 @@ const Stats = (() => {
     });
   }
 
-  function openPlatformModal(platform, yearGames) {
-    const games = yearGames.filter(g => g.platform === platform);
-    document.getElementById('platform-modal-title').textContent = `${platform} (${games.length}개)`;
+  function openGameListModal(title, games) {
+    document.getElementById('platform-modal-title').textContent = title;
 
     const list = document.getElementById('platform-game-list');
     list.innerHTML = '';
@@ -743,6 +744,11 @@ const Stats = (() => {
     });
 
     document.getElementById('platform-overlay').classList.remove('hidden');
+  }
+
+  function openPlatformModal(platform, yearGames) {
+    const games = yearGames.filter(g => g.platform === platform);
+    openGameListModal(`${platform} (${games.length}개)`, games);
   }
 
   function closePlatformModal() {
@@ -781,6 +787,9 @@ const Stats = (() => {
     }
     emptyEl.classList.add('hidden');
 
+    const DAY_WIDTH = 30;
+    const daysAreaWidth = daysInMonth * DAY_WIDTH;
+
     // Header row
     container.innerHTML = '';
     const headerRow = document.createElement('div');
@@ -788,6 +797,7 @@ const Stats = (() => {
     headerRow.innerHTML = `<div class="tl-header-label">게임</div>`;
     const headerDays = document.createElement('div');
     headerDays.className = 'tl-days';
+    headerDays.style.width = daysAreaWidth + 'px';
     for (let d = 1; d <= daysInMonth; d++) {
       const col = document.createElement('div');
       col.className = 'tl-day-col';
@@ -809,6 +819,7 @@ const Stats = (() => {
       const barArea = document.createElement('div');
       barArea.className = 'tl-bar-area';
       barArea.style.position = 'relative';
+      barArea.style.width = daysAreaWidth + 'px';
 
       const s = game.startDate ? new Date(game.startDate + 'T00:00:00') : new Date(game.endDate + 'T00:00:00');
       const e = game.endDate ? new Date(game.endDate + 'T00:00:00') : new Date(game.startDate + 'T00:00:00');
@@ -894,6 +905,20 @@ const Stats = (() => {
     });
     document.getElementById('platform-overlay').addEventListener('click', e => {
       if (e.target === document.getElementById('platform-overlay')) closePlatformModal();
+    });
+
+    document.getElementById('card-cleared').addEventListener('click', () => {
+      const games = currentYearGames.filter(g => g.ending === 'Yes');
+      openGameListModal(`${tlYear}년 · 클리어 (${games.length}개)`, games);
+    });
+
+    document.getElementById('card-total').addEventListener('click', () => {
+      openGameListModal(`${tlYear}년 · 총 플레이 (${currentYearGames.length}개)`, currentYearGames);
+    });
+
+    document.getElementById('card-playing').addEventListener('click', () => {
+      const games = currentYearGames.filter(g => g.ending === '진행중');
+      openGameListModal(`${tlYear}년 · 진행 중 (${games.length}개)`, games);
     });
 
     document.getElementById('tl-popup-close').addEventListener('click', closeTlPopup);
