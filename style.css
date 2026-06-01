@@ -1023,10 +1023,13 @@ html, body {
 .tl-days {
   display: flex;
   flex-shrink: 0;
+  background: var(--bg3);
 }
 
 .tl-day-col {
   flex: 0 0 30px;
+  min-width: 0;
+  overflow: hidden;
   border-right: 1px solid var(--border);
   font-size: 0.72rem;
   color: var(--text-dim);
