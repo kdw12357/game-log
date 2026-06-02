@@ -327,6 +327,30 @@ const Form = (() => {
     document.getElementById('field-rating').value = val;
   }
 
+  function compressImage(file) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 1200;
+          let { width, height } = img;
+          if (width > MAX || height > MAX) {
+            if (width >= height) { height = Math.round(height * MAX / width); width = MAX; }
+            else { width = Math.round(width * MAX / height); height = MAX; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   function renderCoverPreview(base64) {
     const preview = document.getElementById('cover-preview');
     if (base64) {
@@ -357,12 +381,11 @@ const Form = (() => {
     document.getElementById('field-cover').addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        coverBase64 = ev.target.result;
+      document.getElementById('cover-preview').innerHTML = '<span class="cover-placeholder">이미지 처리 중...</span>';
+      compressImage(file).then(compressed => {
+        coverBase64 = compressed;
         renderCoverPreview(coverBase64);
-      };
-      reader.readAsDataURL(file);
+      });
     });
 
     // Remove cover
