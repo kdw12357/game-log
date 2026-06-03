@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-log-v99';
+const CACHE_NAME = 'game-log-v100';
 const CORE_FILES = [
   '.',
   'index.html',

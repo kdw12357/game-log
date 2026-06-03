@@ -687,20 +687,24 @@ html, body {
 /* Detail Modal */
 .detail-cover-wrap {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, var(--bg3) 0%, #DBEAFE 100%);
-  overflow: hidden;
-  border-radius: 0;
+  background: #F0F6FF;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 5rem;
+  box-sizing: border-box;
 }
 
 .detail-cover {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .detail-body { padding: 20px; }
