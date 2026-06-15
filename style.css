@@ -871,6 +871,10 @@ html, body {
   font-family: inherit;
   box-shadow: 0 0 12px var(--blue-glow);
   transition: opacity .15s, box-shadow .15s;
+  -webkit-appearance: none;
+  appearance: none;
+  align-self: center;
+  flex-shrink: 0;
 }
 
 .btn-save-image:hover { opacity: 0.88; box-shadow: 0 0 20px var(--blue-glow); }
