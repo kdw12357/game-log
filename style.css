@@ -848,7 +848,33 @@ html, body {
 .plt-item-meta { font-size: 0.78rem; color: var(--text-dim); }
 
 /* ===== STATS ===== */
-.stats-toolbar { margin-bottom: 20px; }
+.stats-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-save-image {
+  height: 36px;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #2563EB, #0EA5E9);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  box-shadow: 0 0 12px var(--blue-glow);
+  transition: opacity .15s, box-shadow .15s;
+}
+
+.btn-save-image:hover { opacity: 0.88; box-shadow: 0 0 20px var(--blue-glow); }
+.btn-save-image:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
 .stats-summary {
   display: grid;

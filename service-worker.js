@@ -1,4 +1,4 @@
-const CACHE_NAME = 'game-log-v101';
+const CACHE_NAME = 'game-log-v102';
 const CORE_FILES = [
   '.',
   'index.html',
@@ -6,7 +6,8 @@ const CORE_FILES = [
   'app.js',
   'manifest.json',
   'icons/icon-192.png',
-  'icons/icon-512.png'
+  'icons/icon-512.png',
+  'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
 ];
 
 self.addEventListener('install', e => {
