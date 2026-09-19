@@ -35,6 +35,9 @@
           <button class="menu-item" id="menu-import">📥 JSON 가져오기</button>
           <button class="menu-item" id="menu-sync">🔄 동기화</button>
           <button class="menu-item" id="menu-secret">🔑 비밀 키 설정</button>
+          <button class="menu-item" id="menu-images">🖼 이미지 백업/복원</button>
+          <button class="menu-item" id="menu-usage">💾 저장공간 사용량</button>
+          <button class="menu-item" id="menu-cleanup">🧹 저장공간 정리</button>
         </div>
       </div>
     </div>
@@ -269,6 +272,52 @@
 
   <!-- HIDDEN IMPORT INPUT -->
   <input type="file" id="import-file-input" accept=".json" class="hidden">
+
+  <input type="file" id="images-restore-input" accept=".json" class="hidden">
+
+  <!-- MIGRATION PROGRESS -->
+  <div class="modal-overlay hidden" id="migrate-overlay">
+    <div class="modal-box migrate-box">
+      <div class="secret-modal-body">
+        <h3 class="modal-heading">🖼 이미지 최적화</h3>
+        <p class="secret-modal-desc">기존 커버 이미지를 저장공간이 넉넉한 곳으로 옮기고 있습니다.<br>잠시만 기다려주세요. (한 번만 진행됩니다)</p>
+        <div class="usage-bar"><div class="usage-fill" id="migrate-fill" style="width:0%"></div></div>
+        <div class="usage-note" id="migrate-text">이미지 변환 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORAGE USAGE MODAL -->
+  <div class="modal-overlay hidden" id="usage-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-heading">💾 저장공간 사용량</h3>
+        <button class="modal-close" id="usage-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="secret-modal-body" id="usage-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE BACKUP MODAL -->
+  <div class="modal-overlay hidden" id="backup-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-heading">🖼 이미지 백업/복원</h3>
+        <button class="modal-close" id="backup-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="secret-modal-body">
+          <p class="secret-modal-desc">커버 이미지는 이 기기에만 저장되고 동기화되지 않습니다.<br>다른 기기로 옮기려면 백업 파일을 만든 뒤, 그 기기에서 <b>먼저 동기화</b>하고 복원하세요.</p>
+          <div class="secret-modal-actions">
+            <button class="btn-secondary" id="backup-restore">📥 백업에서 복원</button>
+            <button class="btn-primary" id="backup-make">📤 백업 파일 만들기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- SECRET KEY MODAL -->
   <div class="modal-overlay hidden" id="secret-modal-overlay">

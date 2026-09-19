@@ -1319,3 +1319,36 @@ html, body {
   margin-top: 8px;
   flex-wrap: wrap;
 }
+
+/* ===== STORAGE USAGE / MIGRATION ===== */
+.usage-row { margin-bottom: 18px; }
+.usage-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.usage-bar {
+  height: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.usage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  border-radius: 99px;
+  transition: width .2s;
+}
+.usage-fill.usage-danger { background: linear-gradient(90deg, var(--yellow), var(--red)); }
+.usage-note {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 6px;
+}
+.migrate-box { max-width: 360px; }
+.migrate-box .modal-heading { margin-bottom: 10px; }
+.migrate-box .usage-bar { margin-top: 4px; }
